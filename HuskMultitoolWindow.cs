@@ -12,7 +12,7 @@ public class HuskMultitoolWindow : EditorWindow
     private float delayBetweenMessages = 5f;
     private float nextSendTime = 0f;
 
-    private string githubRawUrl = "https://raw.githubusercontent.com/KeySystemGUI/HusksMultitool/refs/heads/main/HuskMultitoolWindow.cs";
+    private string githubRawUrl = "https://raw.githubusercontent.com/KeySystemGUI/HusksMultitool/main/HuskMultitoolWindow.cs";
     private bool isUpdating = false;
 
     [MenuItem("Tools/Husk Multitool")]
@@ -112,6 +112,7 @@ public class HuskMultitoolWindow : EditorWindow
     {
         if (isUpdating) return;
         isUpdating = true;
+
         EditorApplication.update += DownloadFile;
     }
 
@@ -126,16 +127,28 @@ public class HuskMultitoolWindow : EditorWindow
             if (webRequest.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError("Error downloading file: " + webRequest.error);
+                isUpdating = false;
+                EditorApplication.update -= DownloadFile;
+                return;
             }
-            else
+
+            string localFilePath = "Assets/Editor/HuskMultitoolWindow.cs"; // Pfad zum Editor-Ordner
+            string remoteContent = webRequest.downloadHandler.text;
+            string localContent = File.Exists(localFilePath) ? File.ReadAllText(localFilePath) : "";
+
+            if (remoteContent != localContent)
             {
-                string localFilePath = "Assets/Scripts/HuskMultitoolWindow.cs"; // Pfad zu deinem lokalen Skript
-                File.WriteAllText(localFilePath, webRequest.downloadHandler.text);
+                File.WriteAllText(localFilePath, remoteContent);
                 AssetDatabase.Refresh();
                 Debug.Log("File updated successfully!");
             }
+            else
+            {
+                Debug.Log("No updates available.");
+            }
+
+            isUpdating = false;
+            EditorApplication.update -= DownloadFile;
         }
-        isUpdating = false;
-        EditorApplication.update -= DownloadFile;
     }
 }
