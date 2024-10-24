@@ -12,7 +12,7 @@ public class HuskMultitoolWindow : EditorWindow
     private float delayBetweenMessages = 5f;
     private float nextSendTime = 0f;
 
-    private string githubRawUrl = "https://raw.githubusercontent.com/KeySystemGUI/HusksMultitool/blob/main/HuskMultitoolWindow.cs";
+    private string githubRawUrl = "https://raw.githubusercontent.com/KeySystemGUI/HusksMultitool/refs/heads/main/HuskMultitoolWindow.cs";
     private bool isUpdating = false;
 
     [MenuItem("Tools/Husk Multitool")]
@@ -129,7 +129,7 @@ public class HuskMultitoolWindow : EditorWindow
             }
             else
             {
-                string localFilePath = "Assets/Scripts/HuskMultitoolWindow.cs";
+                string localFilePath = "Assets/Scripts/HuskMultitoolWindow.cs"; // Pfad zu deinem lokalen Skript
                 File.WriteAllText(localFilePath, webRequest.downloadHandler.text);
                 AssetDatabase.Refresh();
                 Debug.Log("File updated successfully!");
