@@ -11,8 +11,8 @@ public class HuskMultitoolWindow : EditorWindow
     private bool isSending = false;
     private float delayBetweenMessages = 5f;
     private float nextSendTime = 0f;
-    
-    private string githubRawUrl = "https://raw.githubusercontent.com/USERNAME/REPO_NAME/BRANCH_NAME/PATH_TO_SCRIPT";
+
+    private string githubRawUrl = "https://raw.githubusercontent.com/KeySystemGUI/HusksMultitool/blob/main/HuskMultitoolWindow.cs";
     private bool isUpdating = false;
 
     [MenuItem("Tools/Husk Multitool")]
