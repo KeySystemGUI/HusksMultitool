@@ -1,7 +1,6 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
-using System.Collections;
 using System.IO;
 
 public class HuskMultitoolWindow : EditorWindow
@@ -14,6 +13,7 @@ public class HuskMultitoolWindow : EditorWindow
 
     private string githubRawUrl = "https://raw.githubusercontent.com/KeySystemGUI/HusksMultitool/main/HuskMultitoolWindow.cs";
     private bool isUpdating = false;
+    private UnityWebRequest currentRequest;
 
     [MenuItem("Tools/Husk Multitool")]
     public static void ShowWindow()
@@ -48,6 +48,11 @@ public class HuskMultitoolWindow : EditorWindow
         else if (isSending)
         {
             GUILayout.Label("Please wait before sending another message.", EditorStyles.boldLabel);
+        }
+
+        if (isUpdating)
+        {
+            GUILayout.Label("Checking for updates...", EditorStyles.boldLabel);
         }
     }
 
@@ -113,42 +118,41 @@ public class HuskMultitoolWindow : EditorWindow
         if (isUpdating) return;
         isUpdating = true;
 
-        EditorApplication.update += DownloadFile;
+        Debug.Log("Checking for updates...");
+        currentRequest = UnityWebRequest.Get(githubRawUrl);
+        currentRequest.SendWebRequest();
+        EditorApplication.update += UpdateCheck;
     }
 
-    private void DownloadFile()
+    private void UpdateCheck()
     {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(githubRawUrl))
+        if (currentRequest.isDone)
         {
-            webRequest.SendWebRequest();
-
-            if (webRequest.result == UnityWebRequest.Result.InProgress) return;
-
-            if (webRequest.result != UnityWebRequest.Result.Success)
+            if (currentRequest.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError("Error downloading file: " + webRequest.error);
-                isUpdating = false;
-                EditorApplication.update -= DownloadFile;
-                return;
-            }
-
-            string localFilePath = "Assets/Editor/HuskMultitoolWindow.cs"; // Pfad zum Editor-Ordner
-            string remoteContent = webRequest.downloadHandler.text;
-            string localContent = File.Exists(localFilePath) ? File.ReadAllText(localFilePath) : "";
-
-            if (remoteContent != localContent)
-            {
-                File.WriteAllText(localFilePath, remoteContent);
-                AssetDatabase.Refresh();
-                Debug.Log("File updated successfully!");
+                Debug.LogError("Error downloading file: " + currentRequest.error);
             }
             else
             {
-                Debug.Log("No updates available.");
+                string localFilePath = "Assets/Editor/HuskMultitoolWindow.cs"; // Pfad zum Editor-Ordner
+                string remoteContent = currentRequest.downloadHandler.text;
+                string localContent = File.Exists(localFilePath) ? File.ReadAllText(localFilePath) : "";
+
+                if (remoteContent != localContent)
+                {
+                    File.WriteAllText(localFilePath, remoteContent);
+                    AssetDatabase.Refresh();
+                    Debug.Log("File updated successfully!");
+                }
+                else
+                {
+                    Debug.Log("Nothing new found.");
+                }
             }
 
             isUpdating = false;
-            EditorApplication.update -= DownloadFile;
+            currentRequest.Dispose();
+            EditorApplication.update -= UpdateCheck;
         }
     }
 }
