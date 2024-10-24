@@ -19,7 +19,7 @@ public class HuskMultitoolWindow : EditorWindow
     public static void ShowWindow()
     {
         var window = GetWindow<HuskMultitoolWindow>("Husk Multitool");
-        window.CheckForUpdates();
+        window.CheckForUpdates(); // Überprüfe auf Updates beim Öffnen des Fensters
     }
 
     private void OnGUI()
