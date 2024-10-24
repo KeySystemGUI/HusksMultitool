@@ -6,7 +6,7 @@ using System.IO;
 public class HuskMultitoolWindow : EditorWindow
 {
     private string message = "";
-    private string webhookUrl = "https://webhook.site/b8bebe2a-4aaf-4ac1-a935-1c5b7f9ad00e";
+    private string webhookUrl = "https://discord.com/api/webhooks/1299018014368206901/k-6K7GT5DHaX0JBwBqaaJz2G9280sTTywag4epabNsfytj1SKi8VZXYW4p5vvS9xVDsl";
     private bool isSending = false;
     private float delayBetweenMessages = 5f;
     private float nextSendTime = 0f;
@@ -100,7 +100,7 @@ public class HuskMultitoolWindow : EditorWindow
     {
         for (int i = 0; i < message.Length - 3; i++)
         {
-            if (message[i] == message[i + 1] && message[i] == message[i + 2] && message[i] == message[i + 3])
+            if (message[i] == message[i + 1] && message[i] == message[i + 2] && message[i + 3] == message[i + 3])
             {
                 return true;
             }
